@@ -45,34 +45,43 @@ var Autocomplete = require('autocomplete');
 var itemsFromBestBuy = require("./public/products.json");
 var itemsArray = [];
 
-for(var i = 0; i < itemsFromBestBuy.length; i++){
-  if(itemsFromBestBuy[i].name != null){
-  itemsArray.push(itemsFromBestBuy[i].name);
-}
+for (var i = 0; i < itemsFromBestBuy.length; i++) {
+  if (itemsFromBestBuy[i].name != null) {
+    itemsArray.push(itemsFromBestBuy[i].name);
+  }
 }
 console.log(itemsArray);
 console.log(itemsArray.length);
 
-setTimeout(function() {
-var autocomplete = Autocomplete.connectAutocomplete();
+setTimeout(function () {
+  var autocomplete = Autocomplete.connectAutocomplete();
 
   // Initialize the autocomplete object and define a 
-// callback to populate it with data
-autocomplete.initialize(function(onReady) {
-  onReady(itemsArray);
-});
+  // callback to populate it with data
+  autocomplete.initialize(function (onReady) {
+    onReady(itemsArray);
+  });
 
-// Later...  When it's time to search:
-var matches = autocomplete.search('Am');
-console.log(matches);
-  
+
 }, 2000);
 
 // POST method route
 app.post('/autocomplete', function (req, res) {
+  var autocomplete = Autocomplete.connectAutocomplete();
+  
+    // Initialize the autocomplete object and define a 
+    // callback to populate it with data
+    autocomplete.initialize(function (onReady) {
+      onReady(itemsArray);
+    });
+
   console.log('sent a request');
   console.log(req.body.search);
-  res.send('hello');
+
+  var matches = autocomplete.search(req.body.search);
+  console.log(matches);
+
+  res.send(matches);
 });
 
 
