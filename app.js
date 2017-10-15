@@ -36,7 +36,7 @@ app.use(bodyParser.json());
 
 app.use(express.static(__dirname + '/public'));
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
   res.sendfile(__dirname + '/public/autocomplete-jquery.html');
 });
 
@@ -81,7 +81,7 @@ for (var i = 0; i < itemsFromBestBuy.length; i++) {
     itemsArray.push(itemsFromBestBuy[i].name);
   }
 }
-console.log(itemsArray);
+// console.log(itemsArray);
 console.log(itemsArray.length);
 
 setTimeout(function () {
@@ -134,24 +134,61 @@ app.enable('trust proxy');
 
 const knex = connect();
 
-function connect () {
-  const config = {
-    user: process.env.SQL_USER,
-    password: process.env.SQL_PASSWORD,
-    database: process.env.SQL_DATABASE
-  };
+function connect() {
+  //use local
+  if (process.env.SQL_USER == null) {
+    console.log('using local settings for db');
+    const config = {
+      host: '35.196.35.232',
+      user: 'root',
+      password: '',
+      database: 'products'
+    };
 
-  if (process.env.INSTANCE_CONNECTION_NAME && process.env.NODE_ENV === 'production') {
-    config.socketPath = `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`;
+    // Connect to the database
+    const knex = Knex({
+      client: 'mysql',
+      connection: config
+    });
+
+    console.log('connecting to knex');
+    // console.log(knex);
+    // return knex;
+    return knex.select('*')
+      .from('products')
+      .then((results) => {
+        console.log(results);
+      });
+
+
+  }
+  else {
+    console.log('using google sql credentials');
+    const config = {
+      user: process.env.SQL_USER || "root",
+      password: process.env.SQL_PASSWORD || "",
+      database: process.env.SQL_DATABASE || "products"
+    };
+    if (process.env.INSTANCE_CONNECTION_NAME && process.env.NODE_ENV === 'production') {
+      config.socketPath = `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`;
+    }
+
+    // Connect to the database
+    const knex = Knex({
+      client: 'mysql',
+      connection: config
+    });
+
+    console.log('connecting to knex');
+    // console.log(knex);
+    // return knex;
+    return knex.select('*')
+      .from('products')
+      .then((results) => {
+        console.log(results);
+      });
   }
 
-  // Connect to the database
-  const knex = Knex({
-    client: 'mysql',
-    connection: config
-  });
-
-  return knex;
 }
 
 /**
@@ -161,7 +198,7 @@ function connect () {
  * @param {object} visit The visit record to insert.
  * @returns {Promise}
  */
-function insertVisit (knex, visit) {
+function insertVisit(knex, visit) {
   return knex('visits').insert(visit);
 }
 
@@ -171,7 +208,7 @@ function insertVisit (knex, visit) {
  * @param {object} knex The Knex connection object.
  * @returns {Promise}
  */
-function getVisits (knex) {
+function getVisits(knex) {
   return knex.select('timestamp', 'userIp')
     .from('visits')
     .orderBy('timestamp', 'desc')

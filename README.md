@@ -1,11 +1,21 @@
+View app at: 
+https://gcp-johnson-interview.appspot.com/
+
+
+`gcloud commands`
 gcloud app deploy
 gcloud app browse
 
-https://gcp-johnson-interview.appspot.com/
 
 gcloud app logs tail -s default
 
+`mysql commands`
+use mysql;
+show tables;
 
+CREATE TABLE products (name VARCHAR(20));
+INSERT INTO products (name) VALUES ('Banana');
+select * from products;
 
 # Quickstart for Node.js in the App Engine Flexible Environment
 
