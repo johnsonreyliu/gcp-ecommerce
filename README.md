@@ -1,3 +1,12 @@
+gcloud app deploy
+gcloud app browse
+
+https://gcp-johnson-interview.appspot.com/
+
+gcloud app logs tail -s default
+
+
+
 # Quickstart for Node.js in the App Engine Flexible Environment
 
 This is the sample application for the
