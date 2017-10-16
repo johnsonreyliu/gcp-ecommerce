@@ -22,17 +22,26 @@ var path = require('path');
 var autocomplete = require('autocompleter');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
-
+var Autocomplete = require('autocomplete');
 const Knex = require('knex');
 const crypto = require('crypto');
 
+//connect to db
+const knex = connect();
 
-// app.get('/', (req, res) => {
-//   res.sendFile(path.join(__dirname + '/public/autocomplete-jquery.html'));
-// });
 
 // app.use(express.static('public'));
 app.use(bodyParser.json());
+
+//allows cors
+app.use(function (req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
 
 app.use(express.static(__dirname + '/public'));
 
@@ -47,92 +56,9 @@ app.listen(PORT, () => {
   console.log('Press Ctrl+C to quit.');
 });
 
-/////////////
-// var connection = mysql.createConnection({
-//   host: '35.196.35.232',
-//   // host: 'gcp-johnson-interview:us-east1:gcp-autocomplete-mysql',
-//   user: 'root',
-//   password: '',
-//   database: 'mysql'
-// });
-// connection.connect(function(err) {
-//   if (err) throw err;
-//   console.log("Connected!");
-
-//   // var sql = "CREATE TABLE product (name VARCHAR(255))";
-
-//   // con.query(sql, function (err, result) {
-//   //   if (err) throw err;
-//   //   console.log("Result: " + result);
-//   // });
-// });
-
-
-
-/////////////
-var Autocomplete = require('autocomplete');
-
-// var VEGETABLES = ['arugula', 'beet', 'broccoli', 'cauliflower', 'corn', 'cabbage', 'carrot'];
-var itemsFromBestBuy = require("./public/products.json");
-var itemsArray = [];
-
-for (var i = 0; i < itemsFromBestBuy.length; i++) {
-  if (itemsFromBestBuy[i].name != null) {
-    itemsArray.push(itemsFromBestBuy[i].name);
-  }
-}
-// console.log(itemsArray);
-console.log(itemsArray.length);
-
-setTimeout(function () {
-  var autocomplete = Autocomplete.connectAutocomplete();
-
-  // Initialize the autocomplete object and define a 
-  // callback to populate it with data
-  autocomplete.initialize(function (onReady) {
-    onReady(itemsArray);
-  });
-
-
-}, 2000);
-
-app.get('/search', function (req, res) {
-  connection.query('SELECT first_name from TABLE_NAME where first_name like "%' + req.query.key + '%"',
-    function (err, rows, fields) {
-      if (err) throw err;
-      var data = [];
-      for (i = 0; i < rows.length; i++) {
-        data.push(rows[i].first_name);
-      }
-      res.end(JSON.stringify(data));
-    });
-});
-
-// POST method route
-app.post('/autocomplete', function (req, res) {
-  var autocomplete = Autocomplete.connectAutocomplete();
-
-  // Initialize the autocomplete object and define a 
-  // callback to populate it with data
-  autocomplete.initialize(function (onReady) {
-    onReady(itemsArray);
-  });
-
-  console.log('sent a request');
-  console.log(req.body.search);
-
-  var matches = autocomplete.search(req.body.search);
-  console.log(matches);
-
-  res.send(matches);
-});
-
-
 //// connect to mysql on google cloud
 
 app.enable('trust proxy');
-
-const knex = connect();
 
 function connect() {
   //use local
@@ -165,9 +91,9 @@ function connect() {
   else {
     console.log('using google sql credentials');
     const config = {
-      user: process.env.SQL_USER || "root",
-      password: process.env.SQL_PASSWORD || "",
-      database: process.env.SQL_DATABASE || "products"
+      user: process.env.SQL_USER,
+      password: process.env.SQL_PASSWORD,
+      database: process.env.SQL_DATABASE
     };
     if (process.env.INSTANCE_CONNECTION_NAME && process.env.NODE_ENV === 'production') {
       config.socketPath = `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`;
@@ -190,6 +116,77 @@ function connect() {
   }
 
 }
+
+/////////////
+
+var itemsFromBestBuy = require("./public/products.json");
+var itemsArray = [];
+
+for (var i = 0; i < itemsFromBestBuy.length; i++) {
+  if (itemsFromBestBuy[i].name != null) {
+    itemsArray.push(itemsFromBestBuy[i].name);
+  }
+}
+// console.log(itemsArray);
+console.log(itemsArray.length);
+
+setTimeout(function () {
+  var autocomplete = Autocomplete.connectAutocomplete();
+
+  // Initialize the autocomplete object and define a 
+  // callback to populate it with data
+  autocomplete.initialize(function (onReady) {
+    onReady(itemsArray);
+  });
+
+}, 2000);
+
+app.post('/search', function (req, res) {
+  console.log('calling /search');
+  console.log(req.body.query);
+  // console.log(req.query.key);
+
+  knex.select('productName')
+    .from('productAutoComplete')
+    .where('productName like "%' + req.body.query + '%"')
+    .then((results) => {
+      console.log(results);
+      res.send(JSON.stringify(results));
+    });
+
+
+  // connection.query('SELECT productName from productAutoComplete where productName like "%' + req.query.key + '%"',
+  //   function (err, rows, fields) {
+  //     if (err) throw err;
+  //     var data = [];
+  //     for (i = 0; i < rows.length; i++) {
+  //       data.push(rows[i].productName);
+  //     }
+  //     res.end(JSON.stringify(data));
+  //   });
+});
+
+// POST method route
+app.post('/autocomplete', function (req, res) {
+  var autocomplete = Autocomplete.connectAutocomplete();
+
+  // Initialize the autocomplete object and define a 
+  // callback to populate it with data
+  autocomplete.initialize(function (onReady) {
+    onReady(itemsArray);
+  });
+
+  console.log('sent a request');
+  console.log(req.body.search);
+
+  var matches = autocomplete.search(req.body.search);
+  console.log(matches);
+
+  res.send(matches);
+});
+
+
+
 
 /**
  * Insert a visit record into the database.
