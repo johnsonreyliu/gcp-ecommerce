@@ -22,13 +22,14 @@
     "e2e-test": "samples test deploy"
   },
   "dependencies": {
+    "async": "2.5.0",
     "autocomplete": "0.0.1",
     "autocompleter": "^1.0.29",
     "body-parser": "^1.18.2",
+    "chance": "^1.0.11",
     "express": "4.15.4",
-    "mysql": "^2.15.0",
     "knex": "0.13.0",
-    "async": "2.5.0"
+    "mysql": "^2.15.0"
   },
   "devDependencies": {
     "@google-cloud/nodejs-repo-tools": "1.4.17"

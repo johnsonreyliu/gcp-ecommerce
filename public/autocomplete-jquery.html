@@ -27,12 +27,14 @@
     <!-- <label for="autocomplete-tags">Typeahead: </label>
     <input class="typeahead tt-query" spellcheck="false" autocomplete="off" name="typeahead" type="text" /> -->
     <label for="autocomplete-tags">Autocomplete from DB: </label>
-    <input type="text" ng-model="searchParam" placeholder="Enter a search here" id="autocomplete-db" ng-change="gcpController.doAutoCompleteFromDB()">
+    <input type="text" ng-model="searchParamDB" placeholder="Enter a search here" id="autocomplete-db" ng-change="gcpController.doAutoCompleteFromDB()">
+    <br/><br/>
     {{gcpController.DBSearchResult}}
-    <br/>
+    <br/><br/>
     <label for="autocomplete-tags">Autocomplete: </label>
     <input type="text" ng-model="searchParam" placeholder="Enter a search here" id="autocomplete-tags" ng-change="gcpController.passSearch()">
     <!-- <button id="searchButton" ng-click="gcpController.passSearch()">Search</button> -->
+    <br/>
     <p>{{gcpController.searchResult}}</p>
   </div>
 

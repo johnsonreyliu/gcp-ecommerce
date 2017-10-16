@@ -26,8 +26,14 @@ var Autocomplete = require('autocomplete');
 const Knex = require('knex');
 const crypto = require('crypto');
 
+var Chance = require('chance');
+// Instantiate Chance so it can be used
+var chance = new Chance();
+
+
 //connect to db
 const knex = connect();
+generateInsert();
 
 
 // app.use(express.static('public'));
@@ -146,13 +152,39 @@ app.post('/search', function (req, res) {
   console.log(req.body.query);
   // console.log(req.query.key);
 
-  knex.select('productName')
-    .from('productAutoComplete')
-    .where('productName like "%' + req.body.query + '%"')
-    .then((results) => {
-      console.log(results);
-      res.send(JSON.stringify(results));
-    });
+  console.log('using google sql credentials in search');
+  const config = {
+    user: process.env.SQL_USER,
+    password: process.env.SQL_PASSWORD,
+    database: process.env.SQL_DATABASE
+  };
+  if (process.env.INSTANCE_CONNECTION_NAME && process.env.NODE_ENV === 'production') {
+    config.socketPath = `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`;
+  }
+
+  // Connect to the database
+  const knex = Knex({
+    client: 'mysql',
+    connection: config
+  });
+
+  // select * from `users` where `columnName` like '%rowlikeme%'
+  return knex('productAutoComplete')
+  .where('productName', 'like', '%' + req.body.query + '%')
+  .select('productName')
+  .then((results) => {
+    console.log(results);
+    res.send(JSON.stringify(results));
+  });
+
+  // return knex.select('productName')
+  //   .from('productAutoComplete')
+  //   // .where('productName like "%' + req.body.query + '%"')
+  //   .where("productName like '%App%'")
+  //   .then((results) => {
+  //     console.log(results);
+  //     res.send(JSON.stringify(results));
+  //   });
 
 
   // connection.query('SELECT productName from productAutoComplete where productName like "%' + req.query.key + '%"',
@@ -186,58 +218,36 @@ app.post('/autocomplete', function (req, res) {
 });
 
 
+function generateInsert(){
 
-
-/**
- * Insert a visit record into the database.
- *
- * @param {object} knex The Knex connection object.
- * @param {object} visit The visit record to insert.
- * @returns {Promise}
- */
-function insertVisit(knex, visit) {
-  return knex('visits').insert(visit);
-}
-
-/**
- * Retrieve the latest 10 visit records from the database.
- *
- * @param {object} knex The Knex connection object.
- * @returns {Promise}
- */
-function getVisits(knex) {
-  return knex.select('timestamp', 'userIp')
-    .from('visits')
-    .orderBy('timestamp', 'desc')
-    .limit(10)
-    .then((results) => {
-      return results.map((visit) => `Time: ${visit.timestamp}, AddrHash: ${visit.userIp}`);
-    });
-}
-
-app.get('/visit', (req, res, next) => {
-  // Create a visit record to be stored in the database
-  const visit = {
-    timestamp: new Date(),
-    // Store a hash of the visitor's ip address
-    userIp: crypto.createHash('sha256').update(req.ip).digest('hex').substr(0, 7)
+  console.log('running generate insert for mysql script');
+  const config = {
+    user: process.env.SQL_USER,
+    password: process.env.SQL_PASSWORD,
+    database: process.env.SQL_DATABASE
   };
+  if (process.env.INSTANCE_CONNECTION_NAME && process.env.NODE_ENV === 'production') {
+    config.socketPath = `/cloudsql/${process.env.INSTANCE_CONNECTION_NAME}`;
+  }
 
-  insertVisit(knex, visit)
-    // Query the last 10 visits from the database.
-    .then(() => getVisits(knex))
-    .then((visits) => {
-      res
-        .status(200)
-        .set('Content-Type', 'text/plain')
-        .send(`Last 10 visits:\n${visits.join('\n')}`)
-        .end();
-    })
-    .catch((err) => {
-      next(err);
-    });
-});
+  // Connect to the database
+  const knex = Knex({
+    client: 'mysql',
+    connection: config
+  });
 
+  var index = 3;
+
+  // var a = "INSERT INTO productAutoComplete (productID, productName) VALUES (3 ,'Academy')(4 ,'Collison')(5 ,'Banana')(6 ,'Banana')(7 ,'Banana')(8 ,'Banana');"
+
+  // Use Chance here.
+  var my_random_string = chance.first();
+
+  // Returns [1] in "mysql", "sqlite", "oracle"; [] in "postgresql" unless the 'returning' parameter is set.
+  // Outputs:
+  // insert into `books` (`title`) values ('Slaughterhouse Five')
+  knex('productAutoComplete').insert({productID: index}, {productName: my_random_string});
+}
 
 
 // [END app]

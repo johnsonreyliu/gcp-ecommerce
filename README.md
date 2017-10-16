@@ -13,8 +13,11 @@ show tables;
 
 CREATE TABLE products (name VARCHAR(20));
 INSERT INTO productAutoComplete (productID, productName) VALUES (1 ,'Apple');
+INSERT INTO productAutoComplete (productID, productName) VALUES (2 ,'Banana');
+INSERT INTO productAutoComplete (productID, productName) VALUES (3 ,'Academy')(4 ,'Collison')(5 ,'Banana')(6 ,'Banana')(7 ,'Banana')(8 ,'Banana');
 INSERT INTO products (name) VALUES ('Banana');
 select * from products;
+select productName from productAutoComplete where productName like '%A%';
 
 export SQL_USER=root
 export SQL_PASSWORD=""

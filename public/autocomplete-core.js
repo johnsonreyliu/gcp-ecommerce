@@ -3,6 +3,8 @@ angular.module('gcpECommerceApp', [])
   .controller('GCPECommerceAppController', function ($scope, $http) {
 
     var gcpController = this;
+    gcpController.DBSearchResult = "DB Autocomplete results here";
+    gcpController.searchResult = "In memory Autocomplete results here";
 
     // $(document).ready(function () {
     //   console.log('typeahead ready');
