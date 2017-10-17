@@ -33,7 +33,6 @@ var chance = new Chance();
 
 //connect to db
 const knex = connect();
-generateInsert();
 
 
 // app.use(express.static('public'));
@@ -51,9 +50,11 @@ app.use(function (req, res, next) {
 
 app.use(express.static(__dirname + '/public'));
 
-app.get('/', function (req, res) {
-  res.sendfile(__dirname + '/public/autocomplete-jquery.html');
-});
+
+// app.get('/', function (req, res) {
+//   res.sendfile(__dirname + '/public/autocomplete-jquery.html');
+
+// });
 
 // Start the server
 const PORT = process.env.PORT || 8080;
@@ -176,26 +177,6 @@ app.post('/search', function (req, res) {
     console.log(results);
     res.send(JSON.stringify(results));
   });
-
-  // return knex.select('productName')
-  //   .from('productAutoComplete')
-  //   // .where('productName like "%' + req.body.query + '%"')
-  //   .where("productName like '%App%'")
-  //   .then((results) => {
-  //     console.log(results);
-  //     res.send(JSON.stringify(results));
-  //   });
-
-
-  // connection.query('SELECT productName from productAutoComplete where productName like "%' + req.query.key + '%"',
-  //   function (err, rows, fields) {
-  //     if (err) throw err;
-  //     var data = [];
-  //     for (i = 0; i < rows.length; i++) {
-  //       data.push(rows[i].productName);
-  //     }
-  //     res.end(JSON.stringify(data));
-  //   });
 });
 
 // POST method route
@@ -217,9 +198,17 @@ app.post('/autocomplete', function (req, res) {
   res.send(matches);
 });
 
+writeOutFunction();
+function writeOutFunction(){
+  var query;
+  for(var i = 3; i < 100; i++){
+    query += '(' + i + ',' + "'" + chance.first() + "'" + ')' + ','
+  }
+  // INSERT INTO productAutoComplete (productID, productName) VALUES (3 ,'Academy')
+  console.log(query);
+}
 
-function generateInsert(){
-
+app.get('/generateNewRows', function (req, res) {
   console.log('running generate insert for mysql script');
   const config = {
     user: process.env.SQL_USER,
@@ -236,9 +225,7 @@ function generateInsert(){
     connection: config
   });
 
-  var index = 3;
-
-  // var a = "INSERT INTO productAutoComplete (productID, productName) VALUES (3 ,'Academy')(4 ,'Collison')(5 ,'Banana')(6 ,'Banana')(7 ,'Banana')(8 ,'Banana');"
+  var index = 4;
 
   // Use Chance here.
   var my_random_string = chance.first();
@@ -246,8 +233,12 @@ function generateInsert(){
   // Returns [1] in "mysql", "sqlite", "oracle"; [] in "postgresql" unless the 'returning' parameter is set.
   // Outputs:
   // insert into `books` (`title`) values ('Slaughterhouse Five')
-  knex('productAutoComplete').insert({productID: index}, {productName: my_random_string});
-}
+  return knex('productAutoComplete')
+  .insert({'productID': index, 'productName': my_random_string});
+  // knex('productAutoComplete').insert({productID: 5}, {productName: 'max'});
+
+  res.send(index + " " + my_random_string);
+});
 
 
 // [END app]

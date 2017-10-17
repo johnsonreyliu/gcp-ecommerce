@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en" ng-app="gcpECommerceApp">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GCP UI Autocomplete</title>
+
+  <!-- Angular Material style sheet -->
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+
+  <!-- Angular Material requires Angular.js Libraries -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+
+  <!-- Angular Material Library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+
+  <!-- jquery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  <!-- typeahead -->
+  <script src="typeahead.js"></script>
+
+  <!-- javascript -->
+  <script src="autocomplete-core.js"></script>
+</head>
+
+<body ng-controller="GCPECommerceAppController as gcpController">
+
+  <!-- <div class="ui-widget">
+    <label for="tags">Jquery: </label>
+    <input id="tags">
+  </div> -->
+
+  <h1>Google Cloud Platform Autocomplete E-Commerce PoC</h1>
+
+  <div class="ui-widget">
+    <!-- <label for="autocomplete-tags">Typeahead: </label>
+    <input class="typeahead tt-query" spellcheck="false" autocomplete="off" name="typeahead" type="text" /> -->
+
+    <h3>We load records into Google Cloud SQL and perform an autocomplete</h3>
+      <md-input-container class="md-block" flex-gt-sm>
+        <label for="autocomplete-tags">Autocomplete from DB:</label>
+        <input ng-model="searchParamDB" id="autocomplete-db" ng-change="gcpController.doAutoCompleteFromDB()">
+      </md-input-container>
+      <div style="padding-bottom: 10px;">
+        <p>{{gcpController.DBSearchResult}}</p>
+      </div>
+
+      <h3>We load the best buy dataset of 50,000 objects in memory to demonstrate an in-memory autocomplete</h3>
+      <md-input-container class="md-block" flex-gt-sm>
+        <label for="autocomplete-tags">Autocomplete from Memory:</label>
+        <input ng-model="searchParam" id="autocomplete-tags" ng-change="gcpController.passSearch()">
+      </md-input-container>
+      <div>
+        <p>{{gcpController.searchResult}}</p>
+      </div>
+
+</div>
+</body>
+
+</html>

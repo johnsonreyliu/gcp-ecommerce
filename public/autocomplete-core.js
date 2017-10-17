@@ -1,6 +1,6 @@
-angular.module('gcpECommerceApp', [])
+var app = angular.module('gcpECommerceApp', ['ngMaterial', 'ngAnimate', 'ngAria'])
 
-  .controller('GCPECommerceAppController', function ($scope, $http) {
+app.controller('GCPECommerceAppController', function ($scope, $http) {
 
     var gcpController = this;
     gcpController.DBSearchResult = "DB Autocomplete results here";
@@ -49,4 +49,15 @@ angular.module('gcpECommerceApp', [])
       console.log('clicked ' + buttonText);
       // console.log(jsonObject);
     }
-  })
+  });
+
+  // app.config(function ($routeProvider, $locationProvider) {
+  //   $routeProvider
+  //     .when("/", {
+  //       templateUrl: "index.html",
+  //       controller: 'GCPECommerceAppController'
+  //     })
+  //     .otherwise({
+  //       redirectTo: '/'
+  //     });
+  // });
