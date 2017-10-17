@@ -28,6 +28,7 @@
     "body-parser": "^1.18.2",
     "chance": "^1.0.11",
     "express": "4.15.4",
+    "fs": "0.0.1-security",
     "knex": "0.13.0",
     "mysql": "^2.15.0"
   },

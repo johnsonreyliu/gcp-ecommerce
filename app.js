@@ -25,6 +25,7 @@ var mysql = require('mysql');
 var Autocomplete = require('autocomplete');
 const Knex = require('knex');
 const crypto = require('crypto');
+var fs = require('fs');
 
 var Chance = require('chance');
 // Instantiate Chance so it can be used
@@ -129,6 +130,29 @@ function connect() {
 var itemsFromBestBuy = require("./public/products.json");
 var itemsArray = [];
 
+createQueryForBestBuy();
+function createQueryForBestBuy(){
+  var query = "INSERT INTO productsBestBuyLong (name) VALUES ";
+
+  for (var i = 0; i < itemsFromBestBuy.length; i++) {
+    //if name has a ' in it or any slashes
+    
+    if (itemsFromBestBuy[i].name != null) {
+      var productName = itemsFromBestBuy[i].name.replace(/[^a-zA-Z0-9 ]/g, "");
+      query += '(' + "'" + productName + "'" + ')' + ','
+    }
+  }
+
+  fs.writeFile(__dirname + "/public/bestbuy", query, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+
+    console.log("The best buy file was saved!");
+});
+}
+
+
 for (var i = 0; i < itemsFromBestBuy.length; i++) {
   if (itemsFromBestBuy[i].name != null) {
     itemsArray.push(itemsFromBestBuy[i].name);
@@ -170,9 +194,10 @@ app.post('/search', function (req, res) {
   });
 
   // select * from `users` where `columnName` like '%rowlikeme%'
-  return knex('productAutoComplete')
-  .where('productName', 'like', '%' + req.body.query + '%')
-  .select('productName')
+  return knex('productsBestBuyLong')
+  .where('name', 'like', '%' + req.body.query + '%')
+  .select('name')
+  .limit(10)
   .then((results) => {
     console.log(results);
     res.send(JSON.stringify(results));
@@ -193,19 +218,28 @@ app.post('/autocomplete', function (req, res) {
   console.log(req.body.search);
 
   var matches = autocomplete.search(req.body.search);
-  console.log(matches);
+  // console.log(matches);
 
   res.send(matches);
 });
 
-writeOutFunction();
+
+
+// writeOutFunction();
 function writeOutFunction(){
-  var query;
-  for(var i = 3; i < 100; i++){
-    query += '(' + i + ',' + "'" + chance.first() + "'" + ')' + ','
+  var query = "INSERT INTO productAutoComplete (productID, productName) VALUES ";
+  for(var i = 20000; i < 30000; i++){
+    query += '(' + i + ',' + "'" + chance.word() + "'" + ')' + ','
   }
   // INSERT INTO productAutoComplete (productID, productName) VALUES (3 ,'Academy')
-  console.log(query);
+
+  fs.writeFile(__dirname + "/public/test", query, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+
+    console.log("The file was saved!");
+});
 }
 
 app.get('/generateNewRows', function (req, res) {

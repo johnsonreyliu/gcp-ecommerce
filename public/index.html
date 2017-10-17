@@ -28,20 +28,13 @@
   <script src="autocomplete-core.js"></script>
 </head>
 
-<body ng-controller="GCPECommerceAppController as gcpController">
-
-  <!-- <div class="ui-widget">
-    <label for="tags">Jquery: </label>
-    <input id="tags">
-  </div> -->
+<body ng-controller="GCPECommerceAppController as gcpController" style="padding-left:100px; padding-right: 200px;">
 
   <h1>Google Cloud Platform Autocomplete E-Commerce PoC</h1>
 
   <div class="ui-widget">
-    <!-- <label for="autocomplete-tags">Typeahead: </label>
-    <input class="typeahead tt-query" spellcheck="false" autocomplete="off" name="typeahead" type="text" /> -->
 
-    <h3>We load records into Google Cloud SQL and perform an autocomplete</h3>
+    <h3>We load records into Google Cloud SQL from the Best Buy product dataset of over 50,000 objects and perform an autocomplete query</h3>
       <md-input-container class="md-block" flex-gt-sm>
         <label for="autocomplete-tags">Autocomplete from DB:</label>
         <input ng-model="searchParamDB" id="autocomplete-db" ng-change="gcpController.doAutoCompleteFromDB()">
@@ -50,14 +43,14 @@
         <p>{{gcpController.DBSearchResult}}</p>
       </div>
 
-      <h3>We load the best buy dataset of 50,000 objects in memory to demonstrate an in-memory autocomplete</h3>
+      <!-- <h3>We load the best buy dataset of 50,000 objects in memory to demonstrate an in-memory autocomplete</h3>
       <md-input-container class="md-block" flex-gt-sm>
         <label for="autocomplete-tags">Autocomplete from Memory:</label>
         <input ng-model="searchParam" id="autocomplete-tags" ng-change="gcpController.passSearch()">
       </md-input-container>
       <div>
         <p>{{gcpController.searchResult}}</p>
-      </div>
+      </div> -->
 
 </div>
 </body>
