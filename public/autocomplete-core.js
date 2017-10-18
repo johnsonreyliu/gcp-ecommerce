@@ -3,22 +3,9 @@ var app = angular.module('gcpECommerceApp', ['ngMaterial', 'ngAnimate', 'ngAria'
 app.controller('GCPECommerceAppController', function ($scope, $http) {
 
     var gcpController = this;
-    gcpController.DBSearchResult = "DB Autocomplete results here";
-    gcpController.searchResult = "In memory Autocomplete results here";
+    // gcpController.DBSearchResult = "DB Autocomplete results here";
+    gcpController.DBSearchResult = [{"name": "Duracell"}, {"name": "Duracell3"}]
 
-    // $(document).ready(function () {
-    //   console.log('typeahead ready');
-    //   $('input.typeahead').typeahead({
-    //     name: 'typeahead',
-    //     // remote: '/search?key=%QUERY',
-    //     source: function (query, syncResults, asyncResults) {
-    //       $.post('/search?q=' + query, function (data) {
-    //         asyncResults(data);
-    //       });
-    //     },
-    //     limit: 10
-    //   });
-    // });
 
     gcpController.doAutoCompleteFromDB = function () {
 
