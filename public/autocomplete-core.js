@@ -4,7 +4,7 @@ app.controller('GCPECommerceAppController', function ($scope, $http) {
 
     var gcpController = this;
     // gcpController.DBSearchResult = "DB Autocomplete results here";
-    gcpController.DBSearchResult = [{"name": "Duracell"}, {"name": "Duracell3"}]
+    // gcpController.DBSearchResult = [{"name": "Duracell"}, {"name": "Duracell3"}]
 
 
     gcpController.doAutoCompleteFromDB = function () {

@@ -177,6 +177,9 @@ app.post('/search', function (req, res) {
   console.log(req.body.query);
   // console.log(req.query.key);
 
+  //replace spaces with % for search
+  var searchQuery = req.body.query.replace(/\s+/g, '%')
+
   console.log('using google sql credentials in search');
   const config = {
     user: process.env.SQL_USER,
@@ -195,7 +198,7 @@ app.post('/search', function (req, res) {
 
   // select * from `users` where `columnName` like '%rowlikeme%'
   return knex('productsBestBuyLong')
-  .where('name', 'like', '%' + req.body.query + '%')
+  .where('name', 'like', '%' + searchQuery + '%')
   .select('name')
   .limit(10)
   .then((results) => {
